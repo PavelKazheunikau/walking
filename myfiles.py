@@ -2,11 +2,26 @@ import os
 from PIL import Image
 from PIL.ExifTags import TAGS
 Image.MAX_IMAGE_PIXELS = None
+import json
+def count_items(file_name:str):
+    start_index  = file_name.find('.шт')
+    if start_index>-1:
+        count_num=[] 
+        i=1
+        while file_name[start_index-i].isdigit():
+            count_num.append(file_name[start_index-i])
+            i+=1
+        return int(''.join(count_num[::-1]))
+    else:
+        return 1
+
+    
 printers = {'Сольвент':0,
             'Сублим':0,
             }
-sol_templates = ('counter', 'popup', 'counter cat promo')
+sol_templates = ('counter', 'popup', 'counter cat promo', 'баннер')
 subl_templates = ('jc', 'textile', 'Press Wall Cat' )
+direct_templates= ('сетка')
 
 for folder, subfolders, filenames in os.walk('c:\\work\\my_projects\\walking\\'):
     for file_name in filenames:
@@ -29,18 +44,19 @@ for folder, subfolders, filenames in os.walk('c:\\work\\my_projects\\walking\\')
                         continue
                 
                 image_width = myfile.width/file_info['XRes']*2.54/100
-                image_height = myfile.height/file_info['XRes']*2.54/100           
-                image_area_m = image_width*image_height
-                print(f'{file_name[:30]}...: {image_width}m {image_height}m {image_area_m} m.sq.')
-
+                image_height = myfile.height/file_info['XRes']*2.54/100
+                count_=count_items(file_name.lower())          
+                image_area_m = image_width*image_height*count_
+        
                 for templ in sol_templates:
                     if templ in file_name.lower():
                         printers['Сольвент']+=image_area_m
-                
-                for templ in subl_templates:
-                    if templ in file_name.lower():
+                        print(f'Сольвент - {file_name:.20}...: Шир-{image_width:10.4f}m Выс-{image_height:10.4f}m кол-во-{count_:4d} {image_area_m:10.4f} m.sq.')
+                        break
+                    else:
                         printers['Сублим']+=image_area_m
-
+                        print(f'Сублим. - {file_name:.20}...: Шир-{image_width:10.4f}m Выс-{image_height:10.4f}m кол-во-{count_:4d} {image_area_m:10.4f} m.sq.')
+                        break
 
 
 
