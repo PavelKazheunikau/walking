@@ -2,10 +2,9 @@ import os
 from PIL import Image
 from PIL.ExifTags import TAGS
 Image.MAX_IMAGE_PIXELS = None
-import json
-def count_items(file_name:str):
-    start_index  = file_name.find('.шт')
-    if start_index>-1:
+def count_items(file_name:str): # defines count of print copies
+    start_index  = file_name.find('шт')
+    if start_index > -1:
         count_num=[] 
         i=1
         while file_name[start_index-i].isdigit():
@@ -15,19 +14,21 @@ def count_items(file_name:str):
     else:
         return 1
 
-    
-printers = {'Сольвент':0,
-            'Сублим':0,
-            }
-sol_templates = ('counter', 'popup', 'counter cat promo', 'баннер')
-subl_templates = ('jc', 'textile', 'Press Wall Cat' )
-direct_templates= ('сетка')
+search_templates={
+    'solvent':
+    [('с_кл','counter cat promo', 'counter', 'popup', 'баннер','промо', 'скл'),0],
+    'sublimation':
+    [('jc', 'textile', 'press wall cat', 'габардин', 'мокрый шелк','сатен','моготекс', 'атлас', 'бумага' ),0],
+    'direct':
+    [('сетка','прямая'),0]
+    }
 
-for folder, subfolders, filenames in os.walk('c:\\work\\my_projects\\walking\\'):
+
+for folder, subfolders, filenames in os.walk('.'):
     for file_name in filenames:
-        extention = os.path.splitext(file_name)[1]        
+        extention = os.path.splitext(file_name)[1]  # extention      
         if extention in ('.jpg', '.tiff', '.tif'):
-            path = os.path.join(folder, file_name)         
+            path = os.path.join(folder, file_name)   # full name      
             file_info = {}            
             try:
                 with Image.open(path) as myfile:
@@ -35,7 +36,7 @@ for folder, subfolders, filenames in os.walk('c:\\work\\my_projects\\walking\\')
                     if exif_data:
                         for tag, value in exif_data.items():                            
                             if TAGS[tag] == 'XResolution':
-                                file_info['XRes']=value
+                                file_info['XRes']=value # get dpi
                                 break                                               
                     elif myfile.info:
                         file_info['XRes'] = myfile.info.get('dpi'[0], 72)
@@ -43,28 +44,44 @@ for folder, subfolders, filenames in os.walk('c:\\work\\my_projects\\walking\\')
                         print(f'file {file_name[:15]}... не имеет информации')
                         continue
                 
-                image_width = myfile.width/file_info['XRes']*2.54/100
+                image_width = myfile.width/file_info['XRes']*2.54/100   #meters
                 image_height = myfile.height/file_info['XRes']*2.54/100
-                count_=count_items(file_name.lower())          
-                image_area_m = image_width*image_height*count_
-        
-                for templ in sol_templates:
-                    if templ in file_name.lower():
-                        printers['Сольвент']+=image_area_m
-                        print(f'Сольвент - {file_name:.20}...: Шир-{image_width:10.4f}m Выс-{image_height:10.4f}m кол-во-{count_:4d} {image_area_m:10.4f} m.sq.')
+                count_= count_items(file_name.lower())                  # copies
+                image_area_m = image_width*image_height*count_          # area of all copies(whole order)
+                find_flag = False                                       # to suspend  more search
+                for printer_type in search_templates:                   # every type of print
+                    for template in search_templates[printer_type][0]:  # list of search words
+                        if template in file_name.lower():
+                            search_templates[printer_type][1]+=image_area_m
+                                                                        #todo formatting
+                            formatted_output = (
+                                f'{template:_<15}-{file_name:>.25}...:   '
+                                f'Ширина -{image_width:>5.2f} м   '
+                                f'Высота -{image_height:>5.2f} м   '
+                                f'Кол-во -{count_:>3d} шт.   '
+                                f'Площадь -{image_area_m:>6.2f} м.кв.'
+                            )                                            
+                            print(formatted_output)
+                            
+                            find_flag = True
+                            break
+                    if find_flag:
                         break
-                    else:
-                        printers['Сублим']+=image_area_m
-                        print(f'Сублим. - {file_name:.20}...: Шир-{image_width:10.4f}m Выс-{image_height:10.4f}m кол-во-{count_:4d} {image_area_m:10.4f} m.sq.')
-                        break
-
+                else:
+                    print('-Непонятка!'+file_name)                       # file name doesn't fit any search word
 
 
             except OSError:
                 print("cannot open", file_name)
         else:
             continue
-print(f"Сольвентник - {printers['Сольвент']}, Сублимация-{printers['Сублим']}")
+for key,value in search_templates.items():
+    print(f'{key} - {value[1]:.2f}', end='\t')
+print()
+# print(f"Сольвентник - {['Сольвент']}, Сублимация-{printers['Сублим']}")
+print(f'Total - {sum(value[1] for value in search_templates.values()):.2f}')
+
+input()
 
 
 
