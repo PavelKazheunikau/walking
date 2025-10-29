@@ -1,23 +1,9 @@
 /.venv
+/.vscode
 /11.py
-/counter-1 — копия.tif
-/counter-2 — копия.tif
-/counter-3 — копия.jpg
-/counter-4 — копия.jpg
-/counter-465559373-1024x1024.jpg
-/jc-1.tif
-/jc-2.tif
-/jc-3.jpg
-/jc-4.jpg
-/popup-1.tif
-/popup-2.tif
-/popup-3.jpg
-/popup-4.jpg
-/textile-1.tif
-/textile-2.tif
-/textile-3.jpg
-/textile-4.jpg
-/БмФР-001783 Маркетинг прайд
-/БмФР-001816 Осиповичский хлебозавод
-/изображение_viber_2025-04-25_17-13-37-267.jpg
-/изображение_viber__textile 2025-04-23_12-54-51-623.jpg
+/*.tif
+/*.jpg
+/*.jpeg
+/*.png
+/*.tiff
+01.10.2025/
