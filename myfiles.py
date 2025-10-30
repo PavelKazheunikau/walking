@@ -1,6 +1,7 @@
 import os
 from PIL import Image
 from PIL.ExifTags import TAGS
+import openpyxl
 Image.MAX_IMAGE_PIXELS = None
 def count_items(file_name:str): # defines count of print copies
     start_index  = file_name.find('шт')
@@ -52,8 +53,7 @@ for folder, subfolders, filenames in os.walk('.'):
                 for printer_type in search_templates:                   # every type of print
                     for template in search_templates[printer_type][0]:  # list of search words
                         if template in file_name.lower():
-                            search_templates[printer_type][1]+=image_area_m
-                                                                        #todo formatting
+                            search_templates[printer_type][1]+=image_area_m #  add area to specific printer
                             formatted_output = (
                                 f'{template:_<15}-{file_name:>.25}...:   '
                                 f'Ширина -{image_width:>5.2f} м   '
@@ -61,11 +61,10 @@ for folder, subfolders, filenames in os.walk('.'):
                                 f'Кол-во -{count_:>3d} шт.   '
                                 f'Площадь -{image_area_m:>6.2f} м.кв.'
                             )                                            
-                            print(formatted_output)
-                            
-                            find_flag = True
+                            print(formatted_output)                            
+                            find_flag = True                            # file is calculated
                             break
-                    if find_flag:
+                    if find_flag:                                       #go to next file is this one is calculated
                         break
                 else:
                     print('-Непонятка!'+file_name)                       # file name doesn't fit any search word
