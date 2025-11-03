@@ -24,7 +24,7 @@ search_templates={
     [('сетка','прямая'),0]
     }
 
-
+dict_to_csv=[]
 for folder, subfolders, filenames in os.walk('.'):
     for file_name in filenames:
         extention = os.path.splitext(file_name)[1]  # extention      
@@ -50,18 +50,20 @@ for folder, subfolders, filenames in os.walk('.'):
                 count_= count_items(file_name.lower())                  # copies
                 image_area_m = image_width*image_height*count_          # area of all copies(whole order)
                 find_flag = False                                       # to suspend  more search
+                row_dict=[]                                             # data to write to csv
                 for printer_type in search_templates:                   # every type of print
-                    for template in search_templates[printer_type][0]:  # list of search words
+                    for template in search_templates[printer_type][0]:  # list of search words            
                         if template in file_name.lower():
                             search_templates[printer_type][1]+=image_area_m #  add area to specific printer
                             formatted_output = (
-                                f'{template:_<15}-{file_name:>.25}...:   '
+                                f'{printer_type:<12} - {template:_<15}-{file_name:>.25}...:   '
                                 f'Ширина -{image_width:>5.2f} м   '
                                 f'Высота -{image_height:>5.2f} м   '
                                 f'Кол-во -{count_:>3d} шт.   '
                                 f'Площадь -{image_area_m:>6.2f} м.кв.'
                             )                                            
-                            print(formatted_output)                            
+                            print(formatted_output)
+                            row_dict.append[printer_type,template, file_name, image_width, image_height, count_, image_area_m]
                             find_flag = True                            # file is calculated
                             break
                     if find_flag:                                       #go to next file is this one is calculated
@@ -74,6 +76,7 @@ for folder, subfolders, filenames in os.walk('.'):
                 print("cannot open", file_name)
         else:
             continue
+    dict_to_csv.append(row_dict)
 for key,value in search_templates.items():
     print(f'{key} - {value[1]:.2f}', end='\t')
 print()
@@ -81,6 +84,3 @@ print()
 print(f'Total - {sum(value[1] for value in search_templates.values()):.2f}')
 
 input()
-
-
-
