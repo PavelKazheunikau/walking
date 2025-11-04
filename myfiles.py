@@ -1,4 +1,5 @@
-import os
+from hashlib import new
+import os, csv
 from PIL import Image
 from PIL.ExifTags import TAGS
 import openpyxl
@@ -20,16 +21,17 @@ search_templates={
     [('с_кл','counter cat promo','counter', 'popup','pop-up','баннер','промо','скл','podium'),0],
     'sublimation':
     [('jc', 'textile', 'press wall cat','габардин', 'мокрый шелк','сатен','моготекс', 'атлас',
-      'бумага', 'оксфорд','дюспо','шоппер','fabric frame','текстиль', 'cветовой', 'space', 'микрофибра', 'флис' ),0],
+      'бумага', 'оксфорд','дюспо','шоппер','fabric frame','текстиль', 'cветовой', 'space', 'микрофибра' ),0],
     'direct':
     [('сетка','прямая'),0]
     }
-
+files_num =0
 dict_to_csv=[]
 for folder, subfolders, filenames in os.walk('.'):
     for file_name in filenames:
         extention = os.path.splitext(file_name)[1]  # extention      
         if extention in ('.jpg', '.tiff', '.tif'):
+            files_num+=1
             path = os.path.join(folder, file_name)   # full name      
             file_info = {}            
             try:
@@ -70,12 +72,11 @@ for folder, subfolders, filenames in os.walk('.'):
                     if find_flag:                                       #go to next file is this one is calculated
                         break
                 else:
-                    print('Непонятка! Добавлено к сублимации - '+file_name) # file name doesn't fit any search word
-
-                    
-                                           
-
-
+                    print(f'Непонятка! Добавлено к сублимации - {file_name} - {image_area_m:>6.2f}')
+                    search_templates['solvent'][1]+=image_area_m
+                    dict_to_csv.append(['solvent','непонятка', file_name, image_width, image_height, count_, image_area_m])
+                     # file name doesn't fit any search word
+            
             except OSError:
                 print("cannot open", file_name)
         else:
@@ -84,6 +85,10 @@ for key,value in search_templates.items():
     print(f'{key} - {value[1]:.2f}', end='\t')
 print()
 # print(f"Сольвентник - {['Сольвент']}, Сублимация-{printers['Сублим']}")
-print(f'Total - {sum(value[1] for value in search_templates.values()):.2f}')
+print(f'Total - {sum(value[1] for value in search_templates.values()):.2f} в {files_num} файлах')
+print(f'Запись в файл')
+with open('month_data.csv', mode='w', newline='') as csv_file:
+    writer=csv.writer(csv_file)
+    writer.writerows(dict_to_csv)
+input('Нажми любую клавишу')
 
-input()
