@@ -17,9 +17,10 @@ def count_items(file_name:str): # defines count of print copies
 
 search_templates={
     'solvent':
-    [('с_кл','counter cat promo', 'counter', 'popup', 'баннер','промо', 'скл'),0],
+    [('с_кл','counter cat promo','counter', 'popup','pop-up','баннер','промо','скл','podium'),0],
     'sublimation':
-    [('jc', 'textile', 'press wall cat', 'габардин', 'мокрый шелк','сатен','моготекс', 'атлас', 'бумага' ),0],
+    [('jc', 'textile', 'press wall cat','габардин', 'мокрый шелк','сатен','моготекс', 'атлас',
+      'бумага', 'оксфорд','дюспо','шоппер','fabric frame','текстиль', 'cветовой', 'space', 'микрофибра', 'флис' ),0],
     'direct':
     [('сетка','прямая'),0]
     }
@@ -63,20 +64,22 @@ for folder, subfolders, filenames in os.walk('.'):
                                 f'Площадь -{image_area_m:>6.2f} м.кв.'
                             )                                            
                             print(formatted_output)
-                            row_dict.append[printer_type,template, file_name, image_width, image_height, count_, image_area_m]
+                            dict_to_csv.append([printer_type,template, file_name, image_width, image_height, count_, image_area_m])
                             find_flag = True                            # file is calculated
                             break
                     if find_flag:                                       #go to next file is this one is calculated
                         break
                 else:
-                    print('-Непонятка!'+file_name)                       # file name doesn't fit any search word
+                    print('Непонятка! Добавлено к сублимации - '+file_name) # file name doesn't fit any search word
+
+                    
+                                           
 
 
             except OSError:
                 print("cannot open", file_name)
         else:
             continue
-    dict_to_csv.append(row_dict)
 for key,value in search_templates.items():
     print(f'{key} - {value[1]:.2f}', end='\t')
 print()
