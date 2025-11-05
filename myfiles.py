@@ -1,18 +1,23 @@
-from hashlib import new
 import os, csv
 from PIL import Image
 from PIL.ExifTags import TAGS
 import openpyxl
 Image.MAX_IMAGE_PIXELS = None
+
+
 def count_items(file_name:str): # defines count of print copies
+
     start_index  = file_name.find('шт')
     if start_index > -1:
-        count_num=[] 
-        i=1
+        while not file_name[start_index-1].isdigit():  
+            newfilename=file_name[:start_index-1]+file_name[start_index:]    #removing simbols between nums and шт.
+            start_index-=1   #go from right to left
+        count_num=[]  #number of copies
+        i=1        
         while file_name[start_index-i].isdigit():
-            count_num.append(file_name[start_index-i])
-            i+=1
-        return int(''.join(count_num[::-1]))
+            count_num.append(file_name[start_index-i])  #gather digits of num in reverse
+            i+=1            
+        return int(''.join(count_num[::-1]))    #unreverse
     else:
         return 1
 
