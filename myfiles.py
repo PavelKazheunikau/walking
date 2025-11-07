@@ -23,36 +23,32 @@ def count_items(file_name:str): # defines count of print copies
 
 search_templates={
     'solvent':
-    [('с_кл','counter cat promo','counter', 'popup','pop-up','баннер','промо','скл','podium'),0],
+    [('с_кл','counter cat promo','counter', 'popup','pop-up','pop_up','баннер','промо','скл','podium'),0],
     'sublimation':
     [('jc', 'textile', 'press wall cat','габардин', 'мокрый шелк','сатен','моготекс', 'атлас',
       'бумага', 'оксфорд','дюспо','шоппер','fabric frame','текстиль', 'cветовой', 'space', 'микрофибра' ),0],
     'direct':
     [('сетка','прямая'),0]
     }
-files_num =0
+printed_files_num =0
+other_files=0
 dict_to_csv=[]
 for folder, subfolders, filenames in os.walk('.'):
     for file_name in filenames:
         extention = os.path.splitext(file_name)[1]  # extention      
         if extention in ('.jpg', '.tiff', '.tif'):
-            files_num+=1
+            printed_files_num+=1
             path = os.path.join(folder, file_name)   # full name      
             file_info = {}            
             try:
                 with Image.open(path) as myfile:
                     exif_data = myfile.getexif()
                     if exif_data:
-                        for tag, value in exif_data.items():                            
-                            if TAGS[tag] == 'XResolution':
-                                file_info['XRes']=value # get dpi
-                                break                                               
-                    elif myfile.info:
-                        file_info['XRes'] = myfile.info.get('dpi'[0], 72)
+                        file_info['XRes'] = myfile.info.get('dpi', 72)[0]
                     else:
                         print(f'file {file_name[:15]}... не имеет информации')
                         continue
-                
+                 
                 image_width = myfile.width/file_info['XRes']*2.54/100   #meters
                 image_height = myfile.height/file_info['XRes']*2.54/100
                 count_= count_items(file_name.lower())                  # copies
@@ -85,12 +81,13 @@ for folder, subfolders, filenames in os.walk('.'):
             except OSError:
                 print("cannot open", file_name)
         else:
+            other_files+=1
             continue
 for key,value in search_templates.items():
     print(f'{key} - {value[1]:.2f}', end='\t')
 print()
 # print(f"Сольвентник - {['Сольвент']}, Сублимация-{printers['Сублим']}")
-print(f'Total - {sum(value[1] for value in search_templates.values()):.2f} в {files_num} файлах')
+print(f'Total - {sum(value[1] for value in search_templates.values()):.2f} в {printed_files_num}  печатных файлах')
 print(f'Запись в файл')
 with open('month_data.csv', mode='w', newline='') as csv_file:
     writer=csv.writer(csv_file)
