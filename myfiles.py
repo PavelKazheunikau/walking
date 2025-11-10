@@ -23,7 +23,7 @@ def count_items(file_name:str): # defines count of print copies
 
 search_templates={
     'solvent':
-    [('с_кл','counter cat promo','counter', 'popup','pop-up','pop_up','баннер','промо','скл','podium'),0],
+    [('с_кл','counter cat promo','counter', 'popup','pop-up','pop_up','fold-up','баннер','промо','скл','podium'),0],
     'sublimation':
     [('jc', 'textile', 'press wall cat','габардин', 'мокрый шелк','сатен','моготекс', 'атлас',
       'бумага', 'оксфорд','дюспо','шоппер','fabric frame','текстиль', 'cветовой', 'space', 'микрофибра' ),0],
@@ -70,9 +70,9 @@ for folder, subfolders, filenames in os.walk('.'):
                             dict_to_csv.append([printer_type,template, file_name, image_width, image_height, count_, image_area_m])
                             find_flag = True                            # file is calculated
                             break
-                    if find_flag:                                       #go to next file is this one is calculated
+                    if find_flag:                                       #go to next file is this one is calculated. Terminate outer for
                         break
-                else:
+                else:                                                   #name doesn't matches any key word
                     print(f'Непонятка! Добавлено к сублимации - {file_name} - {image_area_m:>6.2f}')
                     search_templates['solvent'][1]+=image_area_m
                     dict_to_csv.append(['solvent','непонятка', file_name, image_width, image_height, count_, image_area_m])
@@ -81,12 +81,11 @@ for folder, subfolders, filenames in os.walk('.'):
             except OSError:
                 print("cannot open", file_name)
         else:
-            other_files+=1
+            other_files+=1                                              # files except printed (orders, preview)
             continue
 for key,value in search_templates.items():
     print(f'{key} - {value[1]:.2f}', end='\t')
 print()
-# print(f"Сольвентник - {['Сольвент']}, Сублимация-{printers['Сублим']}")
 print(f'Total - {sum(value[1] for value in search_templates.values()):.2f} в {printed_files_num}  печатных файлах')
 print(f'Запись в файл')
 with open('month_data.csv', mode='w', newline='') as csv_file:
