@@ -70,6 +70,8 @@ for folder, subfolders, filenames in os.walk('.'):
                             dict_to_csv.append([printer_type,template, file_name, image_width, image_height, count_, image_area_m])
                             find_flag = True                            # file is calculated
                             break
+                    else:
+                        continue
                     if find_flag:                                       #go to next file is this one is calculated. Terminate outer for
                         break
                 else:                                                   #name doesn't matches any key word
