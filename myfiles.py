@@ -1,4 +1,4 @@
-import os, csv
+import os, csv, sys
 from PIL import Image
 from PIL.ExifTags import TAGS
 import openpyxl
@@ -29,7 +29,7 @@ def job_area(file_path:str):
             if exif_data:
                 file_info['XRes'] = myfile.info.get('dpi', 72)[0]
             else:
-                print(f'file {file_name[:15]}... не имеет информации')
+                print(f'file {file_name[:60]}... не имеет информации')
                 return 0
 
 
@@ -88,60 +88,63 @@ search_templates={
     }
 
 #to do: finish dictionary"!!!
-#to do: обход каталога и сохранение списка печатных файлов"!!!
-#to do: площадь заказа в отд функцию"!!!
-#to do: формир словаря с заказами и площ печати по материалам и видам печати"
-#to do: посчитать сумму печати по матералам и категориям"
-#to do: вывод на экран словаря с данными"
-#to do: запись словаря в файл"
+
 
 other_files=[]
 dict_to_csv=[]
 printed_files = []
-for folder, subfolders, filenames in os.walk('Октябрь'):
+for folder, subfolders, filenames in os.walk('c:/temp/2026.04.13/'):
     for file_name in filenames:
-        main_name = os.path.splitext(file_name)[0]  # filename
-        for print_type in search_templates:
-            if print_type in main_name:
-                  path = os.path.join(folder, file_name)   # full name
-                  printed_files.append((path, job_area(path)))
-            else:
-                 other_files.append((file_name, 0))# files except printed (orders, preview)
-            continue
-input('Нажми любую клавишу')
+        ext = os.path.splitext(file_name)[1]  # extention
+        main_name = os.path.splitext(file_name)[0]
+          # filename
+        if ext in ('.tiff', '.tif'):
+                path = os.path.join(folder, file_name) # full name
+                printed_files.append(path)
+        else:
+                path = os.path.join(folder, file_name)
+                other_files.append(path)# files except printed (orders, preview)
 
+#to do: обход каталога и сохранение списка печатных файлов"!!!
+#to do: формир словаря с заказами и площ печати по материалам и видам печати"
+#to do: сформировать список с работами и площадью "!!!
+#to do: посчитать сумму печати по матералам и категориям"
+
+#to do: площадь заказа в отд функцию"!!!
+#to do: вывод на экран словаря с данными"
+#to do: запись словаря в файл"pass
+areas = []
 for job in printed_files:
+     areas.append(job_area(job))    ёёёёёёёёёё
 
-
-
-
-
-        find_flag = False                                       # to suspend  more search
-        row_dict=[]                                             # data to write to csv
-        for printer_type in search_templates:                   # every type of print
-            for template in search_templates[printer_type][0]:  # list of search words
-                if template in file_name.lower():
-                    search_templates[printer_type][1]+=image_area_m #  add area to specific printer
-                    formatted_output = (
-                        f'{printer_type:<12} - {template:_<15}-{file_name:>.25}...:   '
-                        f'Ширина -{image_width:>5.2f} м   '
-                        f'Высота -{image_height:>5.2f} м   '
-                        f'Кол-во -{count_:>3d} шт.   '
-                        f'Площадь -{image_area_m:>6.2f} м.кв.'
-                    )
-                    print(formatted_output)
-                    dict_to_csv.append([printer_type,template, file_name, image_width, image_height, count_, image_area_m])
-                    find_flag = True                            # file is calculated
-                    break
-            else:
-                continue
-            if find_flag:                                       #go to next file is this one is calculated. Terminate outer for
-                break
-        else:                                                   #name doesn't matches any key word
-            print(f'Непонятка! Добавлено к сублимации - {file_name} - {image_area_m:>6.2f}')
-            search_templates['solvent'][1]+=image_area_m
-            dict_to_csv.append(['solvent','непонятка', file_name, image_width, image_height, count_, image_area_m])
-                # file name doesn't fit any search word
+job_areas = list(zip(map(os.path.basename, printed_files), areas))
+input('stop')
+#     find_flag = False                                       # to suspend  more search
+#     row_dict=[]                                             # data to write to csv
+#     for print_type in search_templates:                   # every type of print
+#         for template in search_templates[printer_type][0]:  # list of search words
+#             if template in file_name.lower():
+#                 search_templates[printer_type][1]+=image_area_m #  add area to specific printer
+#                 formatted_output = (
+#                     f'{printer_type:<12} - {template:_<15}-{file_name:>.25}...:   '
+#                     f'Ширина -{image_width:>5.2f} м   '
+#                     f'Высота -{image_height:>5.2f} м   '
+#                     f'Кол-во -{count_:>3d} шт.   '
+#                     f'Площадь -{image_area_m:>6.2f} м.кв.'
+#                 )
+#                 print(formatted_output)
+#                 dict_to_csv.append([printer_type,template, file_name, image_width, image_height, count_, image_area_m])
+#                 find_flag = True                            # file is calculated
+#                 break
+#         else:
+#             continue
+#         if find_flag:                                       #go to next file is this one is calculated. Terminate outer for
+#             break
+# else:                                                   #name doesn't matches any key word
+#     print(f'Непонятка! Добавлено к сублимации - {file_name} - {image_area_m:>6.2f}')
+#     search_templates['solvent'][1]+=image_area_m
+#     dict_to_csv.append(['solvent','непонятка', file_name, image_width, image_height, count_, image_area_m])
+#         # file name doesn't fit any search word
 
 
 #
