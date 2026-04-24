@@ -45,7 +45,8 @@ def job_area(file_path:str):
 
 search_templates={
     'p-SOL':
-        {'m-BNb':['Баннер Блекаут',0],
+        {'m-SCL':['Самоклейка',0],
+        'm-BNb':['Баннер Блекаут',0],
         'm-BN':['Баннер стандартный',0],
         'm-PP':['Полипропилен',0]
         },
@@ -83,7 +84,7 @@ search_templates={
         'm-FLS':['Флис',0],
         'm-FTR':['Футер',0],
         'm-TKZ':['Ткань заказчика',0],
-        'm-TTB':['Бумага термотрансферна',0],
+        'm-TTB':['Бумага термотрансферная',0]
         }
     }
 
@@ -115,13 +116,30 @@ for folder, subfolders, filenames in os.walk('c:/temp/2026.04.13/'):
 #to do: запись словаря в файл"pass
 areas = []
 for job in printed_files:
-     areas.append(job_area(job))    ёёёёёёёёёё
+     areas.append(job_area(job))
 
-job_areas = list(zip(map(os.path.basename, printed_files), areas))
-input('stop')
-#     find_flag = False                                       # to suspend  more search
-#     row_dict=[]                                             # data to write to csv
-#     for print_type in search_templates:                   # every type of print
+all_jobs = list(zip(map(os.path.basename, printed_files), areas))
+
+find_flag = False                                       # to suspend  more search
+row_dict=[]
+for job, area in  all_jobs:
+    for print_type in search_templates:
+        if print_type in job:
+            for material in search_templates[print_type]:
+                if material in job:
+                    dict_to_csv.append([print_type,material, job, area])  # data to write to csv
+                    print(job, '- запись')
+                    break
+            else:
+                print(job,'материал указан неверно')
+            break
+    else:
+        print(job, 'неизв. тип печати')
+
+print(len(dict_to_csv))
+
+# for print_type in search_templates:
+                            # every type of print
 #         for template in search_templates[printer_type][0]:  # list of search words
 #             if template in file_name.lower():
 #                 search_templates[printer_type][1]+=image_area_m #  add area to specific printer
