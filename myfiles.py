@@ -109,7 +109,7 @@ for folder, subfolders, filenames in os.walk('c:/temp/2026.04.13/'):
 #to do: обход каталога и сохранение списка печатных файлов"!!!
 #to do: формир словаря с заказами и площ печати по материалам и видам печати"
 #to do: сформировать список с работами и площадью "!!!
-#to do: посчитать сумму печати по матералам и категориям"
+#to do: посчитать сумму печати по матералам и категориям"!!
 
 #to do: площадь заказа в отд функцию"!!!
 #to do: вывод на экран словаря с данными"
@@ -127,8 +127,9 @@ for job, area in  all_jobs:
         if print_type in job:
             for material in search_templates[print_type]:
                 if material in job:
-                    dict_to_csv.append([print_type,material, job, area])  # data to write to csv
-                    print(job, '- запись')
+                    search_templates[print_type][material][1]+=area
+                    dict_to_csv.append([print_type,search_templates[print_type][material][0], job, area])  # data to write to csv
+                    # print(job, '- запись')
                     break
             else:
                 print(job,'материал указан неверно')
@@ -137,6 +138,23 @@ for job, area in  all_jobs:
         print(job, 'неизв. тип печати')
 
 print(len(dict_to_csv))
+total = 0
+
+for print_type in search_templates:
+    print(print_type, end='\t')
+    print(*list([k[0], k[1]] for k in search_templates[print_type].values() if k[1]>0)) # вывод каждой ненулевой записи из подгруппы
+    sub_total = sum(k[1] for k in search_templates[print_type].values())
+    print(sub_total) # сумма подгуппы
+    total+=sub_total
+
+print(total)
+with open('month_data.csv', mode='w', newline='') as csv_file:
+    writer=csv.writer(csv_file)
+    writer.writerows(dict_to_csv)
+input('Нажми любую клавишу')
+
+
+
 
 # for print_type in search_templates:
                             # every type of print
