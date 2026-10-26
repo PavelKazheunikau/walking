@@ -5,19 +5,18 @@ import openpyxl
 Image.MAX_IMAGE_PIXELS = None
 
 
-def count_items(file_name:str): # defines count of print copies
-
-    start_index  = file_name.find('(д)')
-    if start_index > -1:
-        while not file_name[start_index-1].isdigit():
-            newfilename=file_name[:start_index-1]+file_name[start_index:]    #removing simbols between nums and шт.
-            start_index-=1   #go from right to left
-        count_num=[]  #number of copies
-        i=1
-        while file_name[start_index-i].isdigit():
-            count_num.append(file_name[start_index-i])  #gather digits of num in reverse
+def count_items(filename:str): # defines count of print copies
+    start_index = filename.find('шт')
+    i=0
+    if start_index>-1:
+        while not filename[start_index-i-1].isdigit(): #pass non digital simbols from ШТ ro right
             i+=1
-        return int(''.join(count_num[::-1]))    #unreverse
+        num_end = start_index-i
+
+        while filename[start_index-i-1].isdigit(): #find all digital after шт
+            i+=1
+        num_start = start_index-i
+        return int(filename[num_start:num_end])
     else:
         return 1
 
