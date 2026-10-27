@@ -45,7 +45,7 @@ def job_area(file_path:str):
 search_templates={
     'p-SOL':
         {'m-SCL':['Самоклейка',0],
-        'm-BNb':['Баннер Блекаут',0],
+        'm-BNb':['Баннер Блэкаут',0],
         'm-BN':['Баннер стандартный',0],
         'm-PP':['Полипропилен',0]
         },
@@ -105,14 +105,17 @@ for folder, subfolders, filenames in os.walk('c:/temp/2026.04.13/'):
                 path = os.path.join(folder, file_name)
                 other_files.append(path)# files except printed (orders, preview)
 
-#to do: обход каталога и сохранение списка печатных файлов"!!!
-#to do: формир словаря с заказами и площ печати по материалам и видам печати"
-#to do: сформировать список с работами и площадью "!!!
-#to do: посчитать сумму печати по матералам и категориям"!!
+#to do: обход каталога и сохранение списка печатных файлов"!!! pass
+#to do: формир словаря с заказами и площ печати по материалам и видам печати"pass
+#to do: сформировать список с работами и площадью "!!!pass
+#to do: посчитать сумму печати по матералам и категориям"!! pass
 
-#to do: площадь заказа в отд функцию"!!!
-#to do: вывод на экран словаря с данными"
+#to do: площадь заказа в отд функцию"!!! pass
+#to do: вывод на экран словаря с данными + formatting"
 #to do: запись словаря в файл"pass
+#to do: запись словаря в файл"pass
+#to do: запись словаря excel"
+
 areas = []
 for job in printed_files:
      areas.append(job_area(job))
@@ -147,9 +150,20 @@ for print_type in search_templates:
     total+=sub_total
 
 print(total)
-with open('month_data.csv', mode='w', newline='') as csv_file:
-    writer=csv.writer(csv_file)
-    writer.writerows(dict_to_csv)
+# with open('month_data.csv', mode='w', newline='') as csv_file:
+#     writer=csv.writer(csv_file)
+#     writer.writerows(dict_to_csv)
+wb = openpyxl.Workbook()
+wb.create_sheet(title='month_data', index=0)
+sheet= wb['Данные по печати']
+for row in dict_to_csv:
+     sheet.append(row)
+wb.save('month_data.xlsx')
+# print(dict_to_csv)
+
+
+
+
 input('Нажми любую клавишу')
 
 
